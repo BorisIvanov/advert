@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="spring_test:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="spring-test.war">
+      <element id="artifact" artifact-name="spring_test:war exploded" />
+      <element id="library" level="project" name="Maven: mysql:mysql-connector-java:5.1.31" />
+    </root>
+  </artifact>
+</component>
