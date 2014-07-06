@@ -1,14 +1,10 @@
 package com.letter.controllers;
 
 import com.letter.domain.AdItem;
-import com.letter.domain.Order;
 import com.letter.exception.IdException;
 import com.letter.helpers.JspHelper;
 import com.letter.model.JsonResponse;
-import com.letter.model.OrderRequest;
 import com.letter.service.AdService;
-import com.letter.service.OrderService;
-import com.letter.validator.OrderRequestValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +13,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -27,8 +24,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -67,11 +62,6 @@ public class AdController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(" \t\r\n\f", true));
     }
 
-/*
-    @InitBinder
-    private void initBinder(WebDataBinder binder, final Locale locale) {
-        binder.setValidator(new OrderRequestValidator(locale));
-    }*/
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public @ResponseBody JsonResponse update(@Valid AdItem item,

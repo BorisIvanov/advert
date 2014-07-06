@@ -22,6 +22,9 @@ public class AdService implements com.letter.service.AdService {
     @Autowired
     private AdDao adDao;
 
+    public void setSessionFactoryCode(String code) {
+        adDao.setSessionFactoryCode(code);
+    }
 
     @Override
     public void update(AdItem item) throws IdException {
@@ -41,6 +44,10 @@ public class AdService implements com.letter.service.AdService {
     @Override
     public AdItem get(long id) {
         return adDao.get(id);
+    }
+
+    public void truncate() {
+        adDao.truncate();
     }
 
 }

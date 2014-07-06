@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface AdService {
 
+    public void setSessionFactoryCode(String code);
+
     public void update(AdItem id) throws IdException;
 
     public void remove(long id);
@@ -16,5 +18,7 @@ public interface AdService {
     public List<AdItem> getAll();
 
     public AdItem get(long id);
+
+    public void truncate();
 
 }

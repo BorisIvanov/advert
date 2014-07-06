@@ -28,6 +28,7 @@
                 <li><a href="/?lang=ru">Ru</a></li>
                 <li><a href="/ad/list"><spring:message code="ad.page.title" /></a></li>
                 <li><a href="/ampq/list"><spring:message code="ampq.page.title" /></a></li>
+                <li><a href="/tcp/list"><spring:message code="tcp.page.title"/></a></li>
             </ul>
         </div>
     </div>

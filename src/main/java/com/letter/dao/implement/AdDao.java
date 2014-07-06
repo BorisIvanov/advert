@@ -4,9 +4,7 @@ import com.letter.domain.AdItem;
 import com.letter.exception.IdException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,9 +17,23 @@ public class AdDao implements com.letter.dao.AdDao {
 
     @Autowired
     private SessionFactory sessionFactory;
+/*
+    @Autowired
+    private SessionFactory sessionFactoryTCP;
+*/
 
-    private Session getCurrentSession() {
+    private Session getCurrentSession() {/*
+        if (sessionFactoryCode.equals("TCP")) {
+            return sessionFactoryTCP.getCurrentSession();
+        }*/
         return sessionFactory.getCurrentSession();
+    }
+
+    private String sessionFactoryCode = "DEFAULT";
+
+    @Override
+    public void setSessionFactoryCode(String code) {
+        sessionFactoryCode = code;
     }
 
     @Override
@@ -57,6 +69,11 @@ public class AdDao implements com.letter.dao.AdDao {
     @Override
     public AdItem get(long id) {
         return (AdItem) getCurrentSession().get(AdItem.class, id);
+    }
+
+    @Override
+    public void truncate() {
+        getCurrentSession().createSQLQuery("TRUNCATE TABLE ad_item").executeUpdate();
     }
 
 }
