@@ -15,7 +15,9 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/integration
-        http://www.springframework.org/schema/integration/spring-integration.xsd">
+        http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/ip
+        http://www.springframework.org/schema/integration/ip/spring-integration-ip.xsd">
 
     <context:property-placeholder location="classpath:jdbc.properties"/>
     <context:component-scan base-package="com"/>
@@ -134,9 +136,34 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     <!-- hibernate region end -->
-<!--
-    <bean id="serverBytes2StringChannel" class="com.letter.tcp.ByteArrayToStringConverter" />
-    <bean id="echoService" class="com.letter.tcp.JsonServer" />
+
+    <int:gateway id="gw"
+                 service-interface="com.letter.tcp.JsonGateway"
+                 default-request-channel="input"/>
+
+    <int-ip:tcp-connection-factory id="client"
+                                   type="client"
+                                   host="localhost"
+                                   port="2033"
+                                   single-use="true"
+                                   so-timeout="10000"/>
+
+    <int:channel id="input"/>
+
+    <int-ip:tcp-outbound-gateway id="outGateway"
+                                 request-channel="input"
+                                 reply-channel="clientBytes2StringChannel"
+                                 connection-factory="client"
+                                 request-timeout="10000"
+                                 reply-timeout="10000"/>
+    <!--
+        <int:transformer id="clientBytes2String"
+                         input-channel="clientBytes2StringChannel"
+                         expression="new String(payload)"/>
+    -->
+    <int:transformer id="clientBytes2String"
+                     input-channel="clientBytes2StringChannel"
+                     expression="new java.lang.String(payload)"/>
 
     <int-ip:tcp-connection-factory id="crLfServer"
                                    type="server"
@@ -145,20 +172,54 @@
     <int-ip:tcp-inbound-gateway id="gatewayCrLf"
                                 connection-factory="crLfServer"
                                 request-channel="serverBytes2StringChannel"
-                                />
-    <int:channel id="toSA" />
+                                error-channel="errorChannel"/>
+
+    <int:channel id="toSA"/>
+
     <int:service-activator input-channel="toSA"
                            ref="echoService"
                            method="get"/>
 
+    <bean id="echoService" class="com.letter.tcp.JsonServer"/>
+    <!--
+        <int:transformer id="serverBytes2String"
+                         input-channel="serverBytes2StringChannel"
+                         output-channel="toSA"
+                         expression="new String(payload)" />
+    -->
     <int:transformer id="serverBytes2String"
                      input-channel="serverBytes2StringChannel"
                      output-channel="toSA"
-                     expression="new String(payload)"/>-->
-<!--
+                     expression="new java.lang.String(payload)"/>
+
     <int:transformer id="errorHandler"
                      input-channel="errorChannel"
-                     expression="payload.failedMessage.payload + ':' + payload.cause.message"/>-->
+                     expression="payload.failedMessage.payload + ':' + payload.cause.message"/>
+    <!--
+        <bean id="serverBytes2StringChannel" class="com.letter.tcp.ByteArrayToStringConverter" />
+        <bean id="echoService" class="com.letter.tcp.JsonServer" />
+
+        <int-ip:tcp-connection-factory id="crLfServer"
+                                       type="server"
+                                       port="2033"/>
+
+        <int-ip:tcp-inbound-gateway id="gatewayCrLf"
+                                    connection-factory="crLfServer"
+                                    request-channel="serverBytes2StringChannel"
+                                    />
+        <int:channel id="toSA" />
+        <int:service-activator input-channel="toSA"
+                               ref="echoService"
+                               method="get"/>
+
+        <int:transformer id="serverBytes2String"
+                         input-channel="serverBytes2StringChannel"
+                         output-channel="toSA"
+                         expression="new String(payload)"/>-->
+    <!--
+        <int:transformer id="errorHandler"
+                         input-channel="errorChannel"
+                         expression="payload.failedMessage.payload + ':' + payload.cause.message"/>-->
     <!--
     <int:service-activator id="SA"
                            input-channel="tcpChannel"
